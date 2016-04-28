@@ -1,0 +1,3 @@
+smpirun -np 4 -platform ../cluster.xml -hostfile ../cluster-hostfile ./ep.A.4
+smpirun -np 1 -platform ../cluster.xml -hostfile ../cluster-hostfile --cfg=smpi/running_power:58e9 ./ep.A.1
+smpirun -np 4 -platform ../cluster.xml -hostfile ../cluster-hostfile --cfg=smpi/running_power:58e9 --cfg=smpi/privatize_global_variables:yes ./is.A.4
