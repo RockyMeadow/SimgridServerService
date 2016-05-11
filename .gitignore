@@ -1,2 +1,6 @@
-sessions/
-bin/
+sessions/*
+bin/*
+gen-py/*
+py-impl/*
+*.log
+*.pyc
