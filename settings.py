@@ -1,4 +1,6 @@
-import configuration,os,simulate, subprocess
+#!/usr/bin/python
+import configuration, subprocess, runsim
+import os, sys
 from shutil import move
 import xml.etree.ElementTree as ET
 
@@ -30,16 +32,16 @@ def checkBinaryFiles(config):
             b_numprocs = app['numprocs']
 
             if os.path.isfile(configuration.BIN_PATH+b_kernel+'.'+b_class+'.'+b_numprocs):
-                simulate.printLog('NAS kernel exists')
+                runsim.printLog('NAS kernel exists')
             else:
-                simulate.printLog(configuration.BIN_PATH+b_kernel+'.'+b_class+'.'+b_numprocs+' not found. Create binary file.')
+                runsim.printLog(configuration.BIN_PATH+b_kernel+'.'+b_class+'.'+b_numprocs+' not found. Create binary file.')
                 compileBinaryFiles('NAS',b_numprocs,b_kernel,b_class)
         
         if app['type'] == 'graph500':
             if os.path.isfile(configuration.BIN_PATH+'graph500_smpi_simple'):
-                simulate.printLog('graph500 binary file exists.')
+                runsim.printLog('graph500 binary file exists.')
             else:
-                simulate.printLog(configuration.BIN_PATH+'graph500_smpi_simple'+' not found. Create binary file.')
+                runsim.printLog(configuration.BIN_PATH+'graph500_smpi_simple'+' not found. Create binary file.')
                 compileBinaryFiles('graph500')
         if app['type'] == 'himeno':
             b_class = app['class']
@@ -47,9 +49,9 @@ def checkBinaryFiles(config):
             b_filename = 'himeno'+'.'+b_class+'.'+b_numprocs
 
             if os.path.isfile(configuration.BIN_PATH+b_filename):
-                simulate.printLog('Himeno benchmark file exists')
+                runsim.printLog('Himeno benchmark file exists')
             else:
-                simulate.printLog(configuration.BIN_PATH+b_filename+' not found. Create binary file.')
+                runsim.printLog(configuration.BIN_PATH+b_filename+' not found. Create binary file.')
                 compileBinaryFiles('himeno',b_numprocs,'',b_class)
 
 def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
@@ -61,13 +63,13 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
         stdout, stderr = process.communicate()
 
         if stderr is not '':
-            simulate.printLog('Error compiling benchmark application')
-            simulate.printLog(stdout)
-            simulate.printLog(stderr)
+            runsim.printLog('Error compiling benchmark application')
+            runsim.printLog(stdout)
+            runsim.printLog(stderr)
 
         if os.path.isfile(configuration.NAS_PATH+'bin/'+b_filename):
             move(configuration.NAS_PATH+'bin/'+b_filename,configuration.BIN_PATH+b_filename)
-            simulate.printLog('Finish compiling benchmark application')
+            runsim.printLog('Finish compiling benchmark application')
 
     if b_type == 'himeno':
         os.chdir(configuration.HIMENO_PATH)
@@ -77,16 +79,16 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
         print ''.join(args)
         get_param = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
-        simulate.printLog('[Himeno] Generate parameters.')
+        runsim.printLog('[Himeno] Generate parameters.')
 
         command = ['smpicc','-o',b_filename,'himenoBMT_m.c']
         compiler = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         
-        simulate.printLog('[Himeno] Compiling benchmark file.')
+        runsim.printLog('[Himeno] Compiling benchmark file.')
 
         if os.path.isfile(configuration.HIMENO_PATH+b_filename):
             move(configuration.HIMENO_PATH+b_filename,configuration.BIN_PATH+b_filename)
-            simulate.printLog('Finish compiling benchmark application')
+            runsim.printLog('Finish compiling benchmark application')
 
     if b_type == 'graph500':
         os.chdir(configuration.G500_PATH)
@@ -96,14 +98,19 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
         stdout, stderr = process.communicate()
 
         if stderr is not '':
-            simulate.printLog('Error compiling benchmark application')
-            simulate.printLog(stdout)
-            simulate.printLog(stderr)
+            runsim.printLog('Error compiling benchmark application')
+            runsim.printLog(stdout)
+            runsim.printLog(stderr)
 
         if os.path.isfile(configuration.G500_PATH+b_filename):
             move(configuration.G500_PATH+b_filename,configuration.BIN_PATH+b_filename)
-            simulate.printLog('Finish compiling benchmark application')
+            runsim.printLog('Finish compiling benchmark application')
+
 
 ############## TEST ##############
-config = parseConfigFile('1')
-checkBinaryFiles(config)
+def main(argv):
+    config = parseConfigFile('1')
+    checkBinaryFiles(config)
+
+if __name__ == "__main__":
+    main(sys.argv)

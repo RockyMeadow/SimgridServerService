@@ -1,11 +1,11 @@
-	#!/usr/bin/python
+#!/usr/bin/python
 ## get module list
 import subprocess
 import time
 import os
 import sys
 import logging
-import package.settings
+import settings
 ## get configuration
 import configuration
 
@@ -20,7 +20,7 @@ external_config = {'running_power': '--cfg=smpi/running_power:58e9', 'benchmark_
 #### SAVE RESULT #####
 def saveResult(msg):
 	default_stdout = sys.stdout
-	result_file = open("result.log","a")
+	result_file = open("result.log","w")
 	sys.stdout = result_file
 	print(msg)
 	result_file.close()
@@ -43,16 +43,30 @@ def simulate(sessionID):
 	import settings
 	config = settings.parseConfigFile(sessionID)
 	os.chdir(configuration.SESSION_PATH+sessionID)
+	settings.checkBinaryFiles(config)
+
 	print config
-	# for config in xrange(1,10):
-	# 	pass
-	# process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-	# stdout, stderr = process.communicate()
-	# saveResult(stdout)
-	# printLog(stderr)
-	# process_id = process.pid
-	# printLog("Start process " + str(process_id))
+	for app in config['benchmark']:
+		if app['type']=='NAS':
+			b_filename = app['kernel']+'.'+app['class']+'.'+app['numprocs']
+		if app['type']=='himeno':
+			b_filename = 'himeno'+'.'+app['class']+'.'+app['numprocs']
+		if app['type']=='graph500':
+			b_filename = 'graph500_smpi_simple'
+
+		command = ['smpirun','-np',app['numprocs'],'-platform','platform.xml','-hostfile','hostfile',configuration.BIN_PATH+b_filename]
+
+		process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		stdout, stderr = process.communicate()
+		saveResult(stdout)
+		printLog(stdout)
+		printLog(stderr)
+		process_id = process.pid
+		printLog("Start process " + str(process_id))
+	printLog('Finish Simuation for session: '+sessionID)
 #############
+
+
 
 #### LOGGER ####
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -61,11 +75,11 @@ logger.addHandler(logging.FileHandler('main.log', 'a'))
 #############
 
 ############## TEST ###################
+def main(argv):
+    simulate('1')
 
-simulate('1')
-
-
-
+if __name__ == "__main__":
+    main(sys.argv)
 
 
 
