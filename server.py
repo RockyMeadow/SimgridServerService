@@ -1,5 +1,5 @@
 import sys, glob, configuration, zipfile, random, string
-from runsim import printLog
+from runsim import printLog, run
 import os.path
 sys.path.append('gen-py')
 
@@ -63,13 +63,8 @@ class SimulationServiceHandler():
 			z.extractall(session_working_dir)
 		printLog('Finish extracting file')
 
-		#TODO: Handling config file
-		# config = config_handler(sessionID)
-		
-		#TODO: Check binary benchmark application	
-
 		#TODO: Run simulation
-
+		run(sessionID)
 		#TODO: Save a PID of simulation process to a file
 
 		#TODO: Save output result

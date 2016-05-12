@@ -34,7 +34,7 @@ from thrift.protocol import TBinaryProtocol
 try:
 
   # Make socket
-  transport = TSocket.TSocket('localhost', 1234)
+  transport = TSocket.TSocket('localhost', 9090)
 
   # Buffering is critical. Raw sockets are very slow
   transport = TTransport.TBufferedTransport(transport)

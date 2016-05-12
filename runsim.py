@@ -10,9 +10,6 @@ import settings
 import configuration
 
 #### VAR  ####
-# platformfile = "cluster.xml"
-# hostfile = "cluster-hostfile"
-
 command = ['smpirun']
 external_config = {'running_power': '--cfg=smpi/running_power:58e9', 'benchmark_path': configuration.BIN_PATH+'ep.A.1'}
 ###############
@@ -20,7 +17,7 @@ external_config = {'running_power': '--cfg=smpi/running_power:58e9', 'benchmark_
 #### SAVE RESULT #####
 def saveResult(msg):
 	default_stdout = sys.stdout
-	result_file = open("result.log","w")
+	result_file = open("result.log","a")
 	sys.stdout = result_file
 	print(msg)
 	result_file.close()
@@ -39,28 +36,38 @@ def genScript(config):
 ###############
 
 #### Start simulate ####
-def simulate(sessionID):
+def run(sessionID):
 	import settings
 	config = settings.parseConfigFile(sessionID)
 	os.chdir(configuration.SESSION_PATH+sessionID)
 	settings.checkBinaryFiles(config)
 
-	print config
+	privatize_global_var = ''
+	g500_arg = ''
 	for app in config['benchmark']:
 		if app['type']=='NAS':
 			b_filename = app['kernel']+'.'+app['class']+'.'+app['numprocs']
+			if app['kernel'] != 'ep':
+				privatize_global_var = '--cfg=smpi/privatize_global_variables:yes'
 		if app['type']=='himeno':
 			b_filename = 'himeno'+'.'+app['class']+'.'+app['numprocs']
 		if app['type']=='graph500':
 			b_filename = 'graph500_smpi_simple'
+			g500_arg = app['scale']
 
-		command = ['smpirun','-np',app['numprocs'],'-platform','platform.xml','-hostfile','hostfile',configuration.BIN_PATH+b_filename]
 
+		command = ['smpirun','-np',app['numprocs'],'-platform','platform.xml','-hostfile','hostfile']
+		command.append(privatize_global_var)
+		command.append(configuration.BIN_PATH+b_filename)
+		command.append(g500_arg)
+		
+		print command
 		process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		stdout, stderr = process.communicate()
 		saveResult(stdout)
-		printLog(stdout)
+		# printLog(stdout)
 		printLog(stderr)
+
 		process_id = process.pid
 		printLog("Start process " + str(process_id))
 	printLog('Finish Simuation for session: '+sessionID)
@@ -76,8 +83,7 @@ logger.addHandler(logging.FileHandler('main.log', 'a'))
 
 ############## TEST ###################
 def main(argv):
-    simulate('1')
-
+    run('1')
 if __name__ == "__main__":
     main(sys.argv)
 
