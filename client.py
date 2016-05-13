@@ -50,12 +50,17 @@ try:
 
   # result = client.ping()
   # print result
-  print client.ping()
-  print 'ping()'
+  # print client.ping()
+  # print 'ping()'
+  
+  mystatus = SessionStatus()
   sessionFile = open('/home/rockymeadow/session.zip','rb') 
   content = sessionFile.read()
-  client.simulate(content)
+  mystatus = client.simulate(content)
+  print str(mystatus.status)
+  print mystatus.output
   sessionFile.close()
+
   # Close!
   transport.close()
 

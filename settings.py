@@ -121,10 +121,39 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
             runsim.printLog('Finish compiling benchmark application')
     os.chdir(old_dir)
 
+def getFinishedBencharkList(sessionID):
+    finished = []
+    result_file = configuration.SESSION_PATH + sessionID + '/result.log'
+    with open(result_file,'r') as file:
+        for line in file.readlines():
+            content=line.split(':')
+            # print content
+            if content[0] == 'NAS':
+                key = 'NAS:'+content[1]
+                finished.append(key)
+            if content[0] == 'himeno' or content[0] == 'graph500':
+                finished.append(content[0])
+        runsim.printLog('Finished benchmarks :')
+        runsim.printLog(finished)
+        
+    return finished
+
+def getStatus(sessionID):
+    benchmark_list = parseConfigFile(sessionID)['benchmark']
+    finished_list = getFinishedBencharkList(sessionID)
+    for benchmark in benchmark_list:
+        print benchmark['type'] if benchmark['type'] != 'NAS' else 'NAS:'+benchmark['kernel']
+        if not (benchmark['type'] if benchmark['type'] != 'NAS' else 'NAS:'+benchmark['kernel']) in finished_list:
+            print('fuck')
+            break
+        else: pass
+
 ############## TEST ##############
 def main(argv):
-    config = parseConfigFile('1')
-    checkBinaryFiles(config)
-
+    # config = parseConfigFile('1')
+    # checkBinaryFiles(config)
+    # getFinishedBencharkList('1')
+    fuckthis('1')
+    # getStatus('1')
 if __name__ == "__main__":
     main(sys.argv)

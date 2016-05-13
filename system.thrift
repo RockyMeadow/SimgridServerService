@@ -11,7 +11,7 @@ enum StatusCode
 struct SessionStatus
 {
 	1: StatusCode status,
-	2: string sessionID
+	2: string output
 }
 
 struct Result 

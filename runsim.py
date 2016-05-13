@@ -16,11 +16,11 @@ def saveResult(output,b_type,kernel=''):
 	sys.stdout = result_file
 	if output is '':
 		print('==========================================================')
-		print(b_type+('-'+kernel if b_type=='NAS' else '')+' ERROR: RUNNING BENCHMARK FAILED')
+		print(b_type+('-'+kernel if b_type=='NAS' else '')+': RUNNING BENCHMARK FAILED')
 		print('==========================================================')
 	else:
 		print('==========================================================')
-		print('BENCHMARK RESULT FOR:'+b_type+(':'+kernel if b_type=='NAS' else ''))
+		print(b_type+(':'+kernel if b_type=='NAS' else '')+': BENCHMARK RESULT')
 		print('==========================================================')
 		print(output)
 		print('==========================================================')
@@ -71,6 +71,12 @@ def run(sessionID):
 
 		print ' '.join(command)
 		process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		
+		# Save pid to check progess 
+		process_id = process.pid
+		process.wait()
+		# Interact with process, read data from stdout and stderr
+		# pid_file = open(os.path.join(configuration.SESSION_PATH,sessionID,process))
 		stdout, stderr = process.communicate()
 
 		# save output content to result file
@@ -83,7 +89,7 @@ def run(sessionID):
 		printLog('\n'+stderr)
 
 		process_id = process.pid
-		printLog("Start process " + str(process_id))
+		printLog("Finish process " + str(process_id))
 	printLog('Finish Simuation for session: '+sessionID)
 #############
 

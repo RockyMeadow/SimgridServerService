@@ -1,6 +1,15 @@
-import sys, glob, configuration, zipfile, random, string
-from runsim import printLog, run
+import sys
 import os.path
+import glob
+import string
+import random
+import zipfile
+
+#import local module
+import configuration
+import settings
+from runsim import printLog, run
+
 sys.path.append('gen-py')
 
 from system import *
@@ -30,8 +39,9 @@ class SimulationServiceHandler():
 		printLog('Starting Simulation')
 		simStatus = SessionStatus()
 		if sessionFile is None:
-			simStatus.StatusCode = 2
-			printLog('No session file sent.')
+			simStatus.status = 2
+			simStatus.output = 'Session file not found.'
+			printLog('Session file not found.')
 			return simStatus
 
 		#Check working directory
@@ -65,19 +75,84 @@ class SimulationServiceHandler():
 
 		#TODO: Run simulation
 		run(sessionID)
+
 		#TODO: Save a PID of simulation process to a file
 
 		#TODO: Save output result
-		simStatus.StatusCode = 1
-		simStatus.sessionID = sessionID
+		simStatus.status = 1
+		simStatus.output = sessionID
 		return simStatus
+
 	def getSessionStatus(sessionID):
-		#Validate arguments
+		printLog('Initilaze getting session status function.')
+		simStatus = SessionStatus()
 
-		#Check sessionID
+		#Validate argument
+		if sessionID is None:
+			simStatus.status = 2
+			simStatus.output = 'WARNING: session ID is missing.'
+			printLog(status.output)
+			return simStatus
 
-		#Check PID
-		pass
+		if sessionID == '':
+			simStatus.status = 2
+			simStatus.output = 'WARNING: session ID is empty.'
+			printLog(status.output)
+
+		# try:
+		printLog('Get status for session: '+str(sessionID))
+		session_working_dir = configuration.SESSION_PATH+str(sessionID)
+		if os.path.isdir(session_working_dir):
+			printLog(session_working_dir+' exists')
+		else:
+			simStatus.status = 2
+			simStatus.output = 'WARNING: Unable to find working directory for session '+str(sessionID)
+			printLog(status.output)
+			return simStatus
+		# Check status based on result logging
+		if not os.path.isfile(session_working_dir+'/result.log'):
+			simStatus.status = 0
+			simStatus.output = 'Simulation is in progress '+str(sessionID)
+			printLog(status.output)
+			return simStatus
+		else:
+			benchmark_list = settings.parseConfigFile(sessionID)['benchmark']
+			finished_list = settings.getFinishedBencharkList(sessionID)
+			if not finished_list:
+				simStatus.status = 0
+				simStatus.output = 'Simulation is in progress '+str(sessionID)
+				printLog(status.output)
+				return simStatus
+			else:
+				for benchmark in benchmark_list:
+					if not (benchmark['type'] if benchmark['type'] != 'NAS' else 'NAS:'+benchmark['kernel']) in finished_list:
+						simStatus.status = 0
+						simStatus.output = 'Simulation is in progress '+str(sessionID)
+						printLog(status.output)
+						return simStatus
+				simStatus.status = 1
+				simStatus.output = 'Simulation is finished '+str(sessionID)
+				printLog(status.output)
+				return simStatus
+		# except IOError as e:
+		# 	simStatus.status = 2
+		# 	simStatus.output = "I/O error({0}): {1}".format(e.errno, e.strerror)
+		# 	printLog(simStatus.output)
+
+  #   	except ValueError as e:
+  #   		simStatus.status = 2
+  #   		simStatus.output = "Value error({0}: {1})".format(e,errno. e.strerror)
+		# 	printLog.(simStatus.output)
+
+  #   	except:
+  #   		simStatus.status = 2
+  #   		simStatus.output = 'Unexpected error'
+  #   		printLog(simStatus.output)
+		# 	pprint(sys.exc_info())
+
+		# printLog('Finish getSessionStatus')
+
+		# return simStatus
 
 	def getResultFile(sessionID):
 		printLog('Execute getResultFile function')

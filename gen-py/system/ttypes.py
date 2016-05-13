@@ -38,18 +38,18 @@ class SessionStatus:
   """
   Attributes:
    - status
-   - sessionID
+   - output
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.I32, 'status', None, None, ), # 1
-    (2, TType.STRING, 'sessionID', None, None, ), # 2
+    (2, TType.STRING, 'output', None, None, ), # 2
   )
 
-  def __init__(self, status=None, sessionID=None,):
+  def __init__(self, status=None, output=None,):
     self.status = status
-    self.sessionID = sessionID
+    self.output = output
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -67,7 +67,7 @@ class SessionStatus:
           iprot.skip(ftype)
       elif fid == 2:
         if ftype == TType.STRING:
-          self.sessionID = iprot.readString()
+          self.output = iprot.readString()
         else:
           iprot.skip(ftype)
       else:
@@ -84,9 +84,9 @@ class SessionStatus:
       oprot.writeFieldBegin('status', TType.I32, 1)
       oprot.writeI32(self.status)
       oprot.writeFieldEnd()
-    if self.sessionID is not None:
-      oprot.writeFieldBegin('sessionID', TType.STRING, 2)
-      oprot.writeString(self.sessionID)
+    if self.output is not None:
+      oprot.writeFieldBegin('output', TType.STRING, 2)
+      oprot.writeString(self.output)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -98,7 +98,7 @@ class SessionStatus:
   def __hash__(self):
     value = 17
     value = (value * 31) ^ hash(self.status)
-    value = (value * 31) ^ hash(self.sessionID)
+    value = (value * 31) ^ hash(self.output)
     return value
 
   def __repr__(self):
