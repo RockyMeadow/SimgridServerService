@@ -5,38 +5,39 @@ import time
 import os
 import sys
 import logging
+#local modules
 import settings
-import configuration #configuration of file paths
+import configuration
 
 
 #### SAVE RESULT #####
 def saveResult(output,b_type,kernel=''):
-	default_stdout = sys.stdout
+	# default_stdout = sys.stdout
 	result_file = open("result.log","a")
-	sys.stdout = result_file
+	# sys.stdout = result_file
 	if output is '':
-		print('==========================================================')
-		print(b_type+('-'+kernel if b_type=='NAS' else '')+': RUNNING BENCHMARK FAILED')
-		print('==========================================================')
+		result_file.write('==========================================================\n')
+		result_file.write(b_type+('-'+kernel if b_type=='NAS' else '')+': RUNNING BENCHMARK FAILED\n')
+		result_file.write('==========================================================\n')
 	else:
-		print('==========================================================')
-		print(b_type+(':'+kernel if b_type=='NAS' else '')+': BENCHMARK RESULT')
-		print('==========================================================')
-		print(output)
-		print('==========================================================')
+		result_file.write('==========================================================\n')
+		result_file.write(b_type+(':'+kernel if b_type=='NAS' else '')+': BENCHMARK RESULT\n')
+		result_file.write('==========================================================\n')
+		result_file.write(output)
+		result_file.write('==========================================================\n')
 	result_file.close()
-	sys.stdout = default_stdout
+	# sys.stdout = default_stdout
 ###############
 
 #### DEUBG ####
 def printLog(message):
 	prefix = "[" + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "]"
-	logging.info(prefix + "  " + str(message)) 
+	# logging.info(prefix + "  " + str(message)) 
+	print(prefix+message)
 ###############
 
 #### Start simulate ####
 def run(sessionID):
-	import settings
 	config = settings.parseConfigFile(sessionID)
 
 	if not os.path.isdir(configuration.SESSION_PATH):
@@ -46,9 +47,10 @@ def run(sessionID):
 	os.chdir(configuration.SESSION_PATH+sessionID)
 	settings.checkBinaryFiles(config)
 
+	# def startSimulation():
 	extra_arg = ''
 	g500_arg = ''
-	
+
 	for app in config['benchmark']:
 		if app['type']=='NAS':
 			b_filename = app['kernel']+'.'+app['class']+'.'+app['numprocs']
@@ -74,7 +76,7 @@ def run(sessionID):
 		
 		# Save pid to check progess 
 		process_id = process.pid
-		process.wait()
+
 		# Interact with process, read data from stdout and stderr
 		# pid_file = open(os.path.join(configuration.SESSION_PATH,sessionID,process))
 		stdout, stderr = process.communicate()
@@ -90,22 +92,25 @@ def run(sessionID):
 
 		process_id = process.pid
 		printLog("Finish process " + str(process_id))
-	printLog('Finish Simuation for session: '+sessionID)
+		printLog('Finish Simuation for session: '+sessionID)
 #############
 
 
 
 #### LOGGER ####
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger()
-logger.addHandler(logging.FileHandler('main.log', 'a'))
+# logging.basicConfig(level=logging.INFO, format='%(message)s')
+# logger = logging.getLogger()
+# logger.addHandler(logging.FileHandler('main.log', 'a'))
 #############
 
 ############## TEST ###################
 def main(argv):
-	if os.path.isfile(configuration.SESSION_PATH+'1/result.log'):
-		os.remove(configuration.SESSION_PATH+'1/result.log')
-	run('1')
+	print(sys.argv)
+	sessionID = sys.argv[1]
+	run(sessionID)
+	# if os.path.isfile(configuration.SESSION_PATH+'1/result.log'):
+	# 	os.remove(configuration.SESSION_PATH+'1/result.log')
+	# run('1')
 if __name__ == "__main__":
     main(sys.argv)
 

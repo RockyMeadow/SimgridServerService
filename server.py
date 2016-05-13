@@ -4,6 +4,7 @@ import glob
 import string
 import random
 import zipfile
+from subprocess import Popen, PIPE
 
 #import local module
 import configuration
@@ -74,7 +75,9 @@ class SimulationServiceHandler():
 		printLog('Finish extracting file')
 
 		#TODO: Run simulation
-		run(sessionID)
+		command = ['python','runsim.py',sessionID]
+		process = Popen(command)
+		
 
 		#TODO: Save a PID of simulation process to a file
 
