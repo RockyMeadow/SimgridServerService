@@ -8,6 +8,8 @@ benchmarks/NPB3.3.1/NPB3.3-MPI/IS/is.o
 benchmarks/NPB3.3.1/NPB3.3-MPI/MG/mg.o
 benchmarks/himeno_4490_bmt_c/params.h
 sessions/*
+!sessions/1/
+__init__.py
 bin/*
 py-impl/*
 *.log

@@ -1,0 +1,9 @@
+<simulation>
+    <benchmark type="graph500" numprocs="2" scale="3"/>
+	<benchmark type="NAS" kernel="cg" class="S" numprocs="2"/>
+    <benchmark type="NAS" kernel="ep" class="S" numprocs="10"/>
+    <benchmark type="NAS" kernel="is" class="S" numprocs="8"/>
+    <benchmark type="NAS" kernel="mg" class="S" numprocs="4"/>
+    <benchmark type="NAS" kernel="ft" class="S" numprocs="16"/> 
+    <benchmark type="himeno" class="SSMALL" numprocs="4"/> 
+</simulation>
