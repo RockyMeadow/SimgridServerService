@@ -1,0 +1,8 @@
+smpicc -g -Drestrict=__restrict__ -O3 -DNDEBUG -ffast-math -DGRAPH_GENERATOR_MPI # -g -pg -o graph500_mpi_simple bfs_simple.c main.c oned_csr.c oned_csc.c utils.c validate.c onesided.c onesided_emul.c ../generator/graph_generator.c ../generator/make_graph.c ../generator/splittable_mrg.c ../generator/utils.c -lm
+
+
+smpirun -np 4 -platform ~/GR/main/mpicode/platforms/cluster.xml -hostfile ~/GR/main/mpicode/hostfiles/cluster-hostfile ./a.out
+
+
+smpicc -g -Drestrict=__restrict__ -O3 -DNDEBUG -ffast-math -DGRAPH_GENERATOR_MPI -g -o graph500_mpi_simple bfs_simple.c main.c oned_csr.c oned_csc.c utils.c validate.c onesided.c onesided_emul.c ../generator/graph_generator.c ../generator/make_graph.c ../generator/splittable_mrg.c ../generator/utils.c -lm
+

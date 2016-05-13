@@ -1,0 +1,11 @@
+  node = (  edge = (
+  host = {
+    type = "square";
+    size = "power";
+    values = ("power_used");
+  };
+  link = {
+    type = "rhombus";
+    size = "bandwidth";
+    values = ("bandwidth_used");
+  };

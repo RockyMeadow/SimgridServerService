@@ -19,12 +19,17 @@ def dictify(r,root=True):
     return d
 
 def parseConfigFile(sessionID):
-    tree = ET.parse(configuration.SESSION_PATH+sessionID+'/'+'config.xml')
+    tree = ET.parse(configuration.SESSION_PATH+sessionID+'/'+'settings.xml')
     root = tree.getroot()
     return dictify(root)['simulation']
 
 
 def checkBinaryFiles(config):
+    if not os.path.isdir(configuration.BIN_PATH):
+        runsim.printLog('BIN directory not found. Create new directory.')
+        os.makedirs(configuration.BIN_PATH)
+    else:
+        runsim.printLog('BIN directory exists.')
     for app in config['benchmark']:
         if app['type'] == 'NAS':
             b_kernel = app['kernel']
@@ -55,7 +60,9 @@ def checkBinaryFiles(config):
                 compileBinaryFiles('himeno',b_numprocs,'',b_class)
 
 def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
+    old_dir = os.getcwd()
     if b_type == 'NAS':
+        print old_dir
         os.chdir(configuration.NAS_PATH)
         command = ['make',kernel,'NPROCS='+numprocs,'CLASS='+b_class]
         b_filename = kernel+'.'+b_class+'.'+numprocs
@@ -63,7 +70,7 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
         stdout, stderr = process.communicate()
 
         if stderr is not '':
-            runsim.printLog('Error compiling benchmark application')
+            runsim.printLog('[NAS] Error compiling benchmark')
             runsim.printLog(stdout)
             runsim.printLog(stderr)
 
@@ -75,20 +82,27 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
         os.chdir(configuration.HIMENO_PATH)
         b_filename = 'himeno'+'.'+b_class+'.'+numprocs
         args = ['./set_params',b_class,numprocs]
-        print 'current dir '+os.getcwd()
-        print ''.join(args)
+
         get_param = subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-
-        runsim.printLog('[Himeno] Generate parameters.')
-
-        command = ['smpicc','-o',b_filename,'himenoBMT_m.c']
-        compiler = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        stdout, stderr = get_param.communicate()
         
-        runsim.printLog('[Himeno] Compiling benchmark file.')
+        if stdout is not '':
+            runsim.printLog('[Himeno] Error generate parameters')
+            runsim.printLog('[Himeno] '+stdout)
+        else:
+            command = ['smpicc','-o',b_filename,'himenoBMT_m.c']
+            compiler = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            stdout, stderr = compiler.communicate()
+            runsim.printLog('[Himeno] Compiling benchmark file.')
 
-        if os.path.isfile(configuration.HIMENO_PATH+b_filename):
-            move(configuration.HIMENO_PATH+b_filename,configuration.BIN_PATH+b_filename)
-            runsim.printLog('Finish compiling benchmark application')
+            if stderr is not '':
+                runsim.printLog('[NAS] Error compiling benchmark')
+                runsim.printLog(stdout)
+                runsim.printLog(stderr)
+
+            if os.path.isfile(configuration.HIMENO_PATH+b_filename):
+                move(configuration.HIMENO_PATH+b_filename,configuration.BIN_PATH+b_filename)
+                runsim.printLog('Finish compiling benchmark application')
 
     if b_type == 'graph500':
         os.chdir(configuration.G500_PATH)
@@ -98,14 +112,14 @@ def compileBinaryFiles(b_type,numprocs='1',kernel='ep',b_class='S'):
         stdout, stderr = process.communicate()
 
         if stderr is not '':
-            runsim.printLog('Error compiling benchmark application')
+            runsim.printLog('[G500] Error compiling benchmark application')
             runsim.printLog(stdout)
             runsim.printLog(stderr)
 
         if os.path.isfile(configuration.G500_PATH+b_filename):
             move(configuration.G500_PATH+b_filename,configuration.BIN_PATH+b_filename)
             runsim.printLog('Finish compiling benchmark application')
-
+    os.chdir(old_dir)
 
 ############## TEST ##############
 def main(argv):

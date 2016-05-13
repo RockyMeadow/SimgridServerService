@@ -1,4 +1,6 @@
 sessions/*
+bin/*
 py-impl/*
 *.log
 *.pyc
+benchmarks/himeno_4490_bmt_c/params.h
