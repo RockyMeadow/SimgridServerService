@@ -31,7 +31,7 @@ def saveResult(output,b_type,kernel=''):
 
 #### DEUBG ####
 def printLog(message):
-	prefix = "[" + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "]"
+	prefix = "[" + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()) + "] "
 	# logging.info(prefix + "  " + str(message)) 
 	print(prefix+message)
 ###############
@@ -47,7 +47,6 @@ def run(sessionID):
 	os.chdir(configuration.SESSION_PATH+sessionID)
 	settings.checkBinaryFiles(config)
 
-	# def startSimulation():
 	extra_arg = ''
 	g500_arg = ''
 
@@ -71,7 +70,7 @@ def run(sessionID):
 		command.append(configuration.BIN_PATH+b_filename)
 		command.append(g500_arg)
 
-		print ' '.join(command)
+		# print ' '.join(command) # uncomment this to debug command output
 		process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		
 		# Save pid to check progess 
@@ -87,12 +86,11 @@ def run(sessionID):
 		else:
 			saveResult(stdout,app['type'])
 		
-		# printLog(stdout)
-		printLog('\n'+stderr)
+		# printLog('\n'+stdout)
+		# printLog('\n'+stderr)
 
 		process_id = process.pid
 		printLog("Finish process " + str(process_id))
-		printLog('Finish Simuation for session: '+sessionID)
 #############
 
 
@@ -103,14 +101,12 @@ def run(sessionID):
 # logger.addHandler(logging.FileHandler('main.log', 'a'))
 #############
 
-############## TEST ###################
+############## MAIN ###################
 def main(argv):
 	print(sys.argv)
 	sessionID = sys.argv[1]
 	run(sessionID)
-	# if os.path.isfile(configuration.SESSION_PATH+'1/result.log'):
-	# 	os.remove(configuration.SESSION_PATH+'1/result.log')
-	# run('1')
+	printLog('Finish Simuation for session: '+sessionID)
 if __name__ == "__main__":
     main(sys.argv)
 

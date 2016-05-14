@@ -117,20 +117,20 @@ class Result:
   Attributes:
    - status
    - benchmark_result
-   - tracefile
+   - resultfile
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.I32, 'status', None, None, ), # 1
     (2, TType.STRING, 'benchmark_result', None, None, ), # 2
-    (3, TType.STRING, 'tracefile', None, None, ), # 3
+    (3, TType.STRING, 'resultfile', None, None, ), # 3
   )
 
-  def __init__(self, status=None, benchmark_result=None, tracefile=None,):
+  def __init__(self, status=None, benchmark_result=None, resultfile=None,):
     self.status = status
     self.benchmark_result = benchmark_result
-    self.tracefile = tracefile
+    self.resultfile = resultfile
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -153,7 +153,7 @@ class Result:
           iprot.skip(ftype)
       elif fid == 3:
         if ftype == TType.STRING:
-          self.tracefile = iprot.readString()
+          self.resultfile = iprot.readString()
         else:
           iprot.skip(ftype)
       else:
@@ -174,9 +174,9 @@ class Result:
       oprot.writeFieldBegin('benchmark_result', TType.STRING, 2)
       oprot.writeString(self.benchmark_result)
       oprot.writeFieldEnd()
-    if self.tracefile is not None:
-      oprot.writeFieldBegin('tracefile', TType.STRING, 3)
-      oprot.writeString(self.tracefile)
+    if self.resultfile is not None:
+      oprot.writeFieldBegin('resultfile', TType.STRING, 3)
+      oprot.writeString(self.resultfile)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -189,7 +189,7 @@ class Result:
     value = 17
     value = (value * 31) ^ hash(self.status)
     value = (value * 31) ^ hash(self.benchmark_result)
-    value = (value * 31) ^ hash(self.tracefile)
+    value = (value * 31) ^ hash(self.resultfile)
     return value
 
   def __repr__(self):

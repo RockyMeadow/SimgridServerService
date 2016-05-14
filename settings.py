@@ -1,10 +1,13 @@
 #!/usr/bin/python
-import configuration, subprocess, runsim
 import os, sys
 from shutil import move
 import xml.etree.ElementTree as ET
 
 from copy import copy
+
+# import local module 
+import configuration, subprocess, runsim
+
 
 def dictify(r,root=True):
     if root:
@@ -133,27 +136,24 @@ def getFinishedBencharkList(sessionID):
                 finished.append(key)
             if content[0] == 'himeno' or content[0] == 'graph500':
                 finished.append(content[0])
-        runsim.printLog('Finished benchmarks :')
-        runsim.printLog(finished)
-        
+        print('Finished benchmarks :')
+        print finished
     return finished
 
-def getStatus(sessionID):
+def getSimulationStatus(sessionID):
     benchmark_list = parseConfigFile(sessionID)['benchmark']
     finished_list = getFinishedBencharkList(sessionID)
     for benchmark in benchmark_list:
-        print benchmark['type'] if benchmark['type'] != 'NAS' else 'NAS:'+benchmark['kernel']
         if not (benchmark['type'] if benchmark['type'] != 'NAS' else 'NAS:'+benchmark['kernel']) in finished_list:
-            print('fuck')
-            break
-        else: pass
+            return 0 # unfinished
+    return 1 # simulation finished
 
 ############## TEST ##############
 def main(argv):
+    pass
     # config = parseConfigFile('1')
     # checkBinaryFiles(config)
     # getFinishedBencharkList('1')
-    fuckthis('1')
-    # getStatus('1')
+    # print str(getSimulationStatus('IT6FI8XZIE'))
 if __name__ == "__main__":
     main(sys.argv)
