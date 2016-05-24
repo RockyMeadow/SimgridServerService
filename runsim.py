@@ -70,7 +70,7 @@ def run(sessionID):
 		command.append(configuration.BIN_PATH+b_filename)
 		command.append(g500_arg)
 
-		# print ' '.join(command) # uncomment this to debug command output
+		print ' '.join(command) # uncomment this to debug command output
 		process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		
 		# Save pid to check progess 
@@ -81,10 +81,11 @@ def run(sessionID):
 		stdout, stderr = process.communicate()
 
 		# save output content to result file
+		output = (stdout,stderr)
 		if app['type']=='NAS':
-			saveResult(stdout,app['type'],app['kernel'])
+			saveResult('\n'.join(output),app['type'],app['kernel'])
 		else:
-			saveResult(stdout,app['type'])
+			saveResult('\n'.join(output),app['type'])
 		
 		# printLog('\n'+stdout)
 		# printLog('\n'+stderr)
@@ -106,7 +107,7 @@ def main(argv):
 	print(sys.argv)
 	sessionID = sys.argv[1]
 	run(sessionID)
-	printLog('Finish Simuation for session: '+sessionID)
+	printLog('\033[92m'+'Finish Simuation for session: '+sessionID+'\033[0m')
 if __name__ == "__main__":
     main(sys.argv)
 

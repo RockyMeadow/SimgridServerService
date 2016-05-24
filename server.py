@@ -33,7 +33,7 @@ class SimulationServiceHandler():
 
     def ping(self):
         print'ping()'
-        return 'ping from abc'
+        return 'ping from server'
 
     def simulate(self, sessionFile):
         printLog('Starting Simulation')
@@ -76,7 +76,7 @@ class SimulationServiceHandler():
         command = ['python', 'runsim.py', sessionID]
         process = Popen(command)
 
-        simStatus.status = 1
+        simStatus.status = 0
         simStatus.output = sessionID
         return simStatus
 
@@ -104,13 +104,13 @@ class SimulationServiceHandler():
         else:
             simStatus.status = 2
             simStatus.output = 'Unable to find working directory for session '+str(sessionID)
-            printLog(status.output)
+            printLog(simStatus.output)
             return simStatus
         # Check status based on result logging
         if not os.path.isfile(session_working_dir+'/result.log'):
             simStatus.status = 0
-            simStatus.output = 'Simulation is in progress '+str(sessionID)
-            printLog(status.output)
+            simStatus.output = 'Simulation is in progress. '+str(sessionID)
+            printLog(simStatus.output)
             return simStatus
         else:
             benchmark_list = settings.parseConfigFile(sessionID)['benchmark']
@@ -188,7 +188,7 @@ class SimulationServiceHandler():
             with open(zip_filename,'rb') as file:
                 # result.benchmark_result = file.readlines()
                 result.resultfile = file.read()
-                result.benchmark_result = 'OK??????'
+                result.benchmark_result = 'You just got a successful simulation. Be gratefulb'
                 printLog('Send back simulation result for session: '+sessionID)
                 return result
 
@@ -201,6 +201,6 @@ if __name__ == '__main__':
      
     server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
      
-    printLog("Starting SIMULATION server...")
+    printLog("Starting SIMULATION server at port:" + str(configuration.SERVER_PORT))
     server.serve()
     printLog('done!')

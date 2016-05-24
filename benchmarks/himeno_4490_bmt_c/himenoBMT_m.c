@@ -141,11 +141,13 @@ main(int argc, char *argv[])
     
     score = xmflops2/32.27;
     
+    printf("******************************\n");
     printf("cpu : %f sec.\n", cpu1-cpu0);
     printf("Loop executed for %d times\n",NN);
     printf("Gosa : %e \n",gosa);
     printf("MFLOPS measured : %f\n",xmflops2);
     printf("Score based on MMX Pentium 200MHz : %f\n",score);
+    printf("******************************\n");
   }
 
   MPI_Finalize();

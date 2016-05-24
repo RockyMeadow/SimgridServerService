@@ -2,10 +2,6 @@ benchmarks/NPB3.3.1/NPB3.3-MPI/EP/npbparams.h
 benchmarks/NPB3.3.1/NPB3.3-MPI/FT/npbparams.h
 benchmarks/NPB3.3.1/NPB3.3-MPI/IS/npbparams.h
 benchmarks/NPB3.3.1/NPB3.3-MPI/MG/npbparams.h
-benchmarks/NPB3.3.1/NPB3.3-MPI/EP/ep.o
-benchmarks/NPB3.3.1/NPB3.3-MPI/FT/ft.o
-benchmarks/NPB3.3.1/NPB3.3-MPI/IS/is.o
-benchmarks/NPB3.3.1/NPB3.3-MPI/MG/mg.o
 benchmarks/himeno_4490_bmt_c/params.h
 sessions/*
 !sessions/1/
