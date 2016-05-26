@@ -40,7 +40,7 @@ def checkBinaryFiles(config):
             b_numprocs = app['numprocs']
 
             if os.path.isfile(configuration.BIN_PATH+b_kernel+'.'+b_class+'.'+b_numprocs):
-                runsim.printLog('NAS kernel exists')
+                runsim.printLog('NAS-'+b_kernel+' kernel exists')
             else:
                 runsim.printLog(configuration.BIN_PATH+b_kernel+'.'+b_class+'.'+b_numprocs+' not found. Create binary file.')
                 compileBinaryFiles('NAS',b_numprocs,b_kernel,b_class)

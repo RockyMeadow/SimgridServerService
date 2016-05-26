@@ -65,12 +65,12 @@ def run(sessionID):
 			g500_arg = app['scale']
 
 
-		command = ['smpirun','-np',app['numprocs'],'-platform','platform.xml','-hostfile','hostfile']
+		command = ['smpirun','-np',app['numprocs'],'-platform','platform.xml','-hostfile','hostfile','--cfg=smpi/running_power:58e9']
 		command.append(extra_arg)
 		command.append(configuration.BIN_PATH+b_filename)
 		command.append(g500_arg)
 
-		print ' '.join(command) # uncomment this to debug command output
+		# print ' '.join(command) # uncomment this to debug command output
 		process = subprocess.Popen(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		
 		# Save pid to check progess 

@@ -72,9 +72,18 @@ class SimulationServiceHandler():
         with zipfile.ZipFile(zip_file, "r") as z:
             z.extractall(session_working_dir)
         printLog('Finish extracting file')
-
+        os.chdir(configuration.SYSTEM_PATH)
         command = ['python', 'runsim.py', sessionID]
+        printLog(' '.join(command))
+        printLog(os.getcwd())
         process = Popen(command)
+        # stdout, stderr = process.communicate()
+
+        # if stderr is not '':
+        #     simStatus.status = 2
+        #     simStatus.output = stderr
+        #     printLog(simStatus.output)
+        #     return simStatus
 
         simStatus.status = 0
         simStatus.output = sessionID
@@ -96,7 +105,7 @@ class SimulationServiceHandler():
             simStatus.output = 'session ID is empty.'
             printLog(status.output)
 
-        # try:
+        
         printLog('Get status for session: '+str(sessionID))
         session_working_dir = configuration.SESSION_PATH+str(sessionID)
         if os.path.isdir(session_working_dir):
